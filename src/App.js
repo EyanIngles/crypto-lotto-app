@@ -24,6 +24,7 @@ function App() {
           {prizeBalance ? (
            <>
            <BuytEntries></BuytEntries>
+           <DonationHandler></DonationHandler>
            </>
           ) : (
             <h2>Please Connect to Blockchain to See Prize</h2>

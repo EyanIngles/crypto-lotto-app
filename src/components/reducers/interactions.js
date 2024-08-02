@@ -1,7 +1,7 @@
 import { setAccount, setNetwork, setProvider } from "./provider";
-import { ethers } from "ethers";
 import { setContractLottery, setLotteryPrize, setDonateToPrize, setEntries } from "./lotteryStore";
-import { setContractTztk } from './tztkStore';
+import { setContractTztk, tztk } from './tztkStore';
+import { ethers } from "ethers";
 import TZTK_ABI from '../abis/TZTK_ABI.json';
 import LOTTERY_ABI from '../abis/LOTTERY_ABI.json';
 import config from '../abis/config.json';
@@ -68,22 +68,43 @@ export const loadLotteryPrize = async (provider, chainId, dispatch, lottery, tzt
     return lotteryPrize
 }
 
-export const loadDonateToPrize = async (provider, chainId, lottery, tztk, amount, dispatch) => {
+export const loadDonateToPrize = async (amount, provider, dispatch) => {
+    const signer = provider.getSigner();
+    const chainId = await loadNetwork(provider, dispatch);
+    const lottery = await loadLottery(provider, chainId, dispatch);
+    const bigIntNumber = ethers.toBigInt(amount).toString()
+    const lotteryAddress = await lottery.getAddress();
+    const donation = await tztk.connect(signer).tranfer(lotteryAddress, {value:bigIntNumber})
+    await donation.wait();
 
+    dispatch(setDonateToPrize(donation));
+    return donation;
   };
-export const loadBuyEntries = async (provider, chainId, entriesIN, tztk, lottery, dispatch) => {
-    // am going to want to access tokens and lottery contract and send a value of however many tokens are needed for the entries.
-    const signer = await provider.getSigner()
+  export const loadBuyEntries = async (provider, chainId, entriesIN, tztk, lottery, dispatch) => {
+    try {
+        provider = loadProvider(dispatch)
+        chainId = loadNetwork(provider, dispatch)
+        const signer = provider.getSigner();
+        // Load contracts
+        tztk = await loadTztk(provider, chainId, dispatch);
 
-    lottery = await loadLottery(provider, chainId, dispatch);
-    tztk = await loadTztk(provider, chainId, dispatch);
-    const priceOfEntrySmallNumber = lottery.priceOfEntry();
-    const priceOfEntry = ethers.parseUnits(priceOfEntrySmallNumber).toString();
-    const entries = entriesIN * priceOfEntry // Assuming the units are in 'ether', adjust as needed
-    const transaction = lottery.connect(signer).enterReward(tztk, { value: entries})
-    const result = await transaction.wait();
+        // Fetch the price of entry from the contract
+        const priceOfEntrySmallNumber = await lottery.priceOfEntry(); // Ensure this call is awaited
+        const priceOfEntry = ethers.parseUnits(priceOfEntrySmallNumber.toString(), 'ether'); // Convert to BigNumber
 
-    dispatch(setEntries(result))
+        // Calculate the total amount required for the entries
+        const totalAmount = priceOfEntry * ethers.toBigInt(entriesIN); // Calculate total cost in wei
 
-    return result
-}
+        // Send the transaction with the total amount as value
+        const enterLotto = await lottery.connect(signer).enterReward(tztk.getAddress(), totalAmount );
+        await enterLotto.wait();
+
+        // Dispatch the result
+        dispatch(setEntries(enterLotto));
+
+        return enterLotto;
+    } catch (error) {
+        console.error('Error buying entries:', error);
+        throw error; // Optionally rethrow or handle the error as needed
+    }
+};

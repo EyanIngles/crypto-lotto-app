@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { loadDonateToPrize, loadLottery, loadTztk, loadProvider, loadNetwork } from '../interactions';
+import { tztk } from '../tztkStore';
 
 const DonationHandler = () => {
   const [isDonating, setIsDonating] = useState(false);
@@ -9,28 +10,11 @@ const DonationHandler = () => {
   const dispatch = useDispatch();
   const provider = useSelector(state => state.provider.connection);
   const chainId = useSelector(state => state.provider.network);
-  const lottery = useSelector(state => state.lottery.lotteryContract);
-  const tztk = useSelector(state => state.tztk.tztkContract);
-
-  useEffect(() => {
-    if (!provider) {
-      loadProvider(dispatch);
-    }
-    if (provider && !chainId) {
-      loadNetwork(dispatch, provider);
-    }
-    if (provider && chainId && !lottery) {
-      loadLottery(provider, chainId, dispatch);
-    }
-    if (provider && chainId && !tztk) {
-      loadTztk(provider, chainId, dispatch);
-    }
-  }, [provider, chainId, lottery, tztk, dispatch]);
 
   const donateHandler = async (e) => {
     e.preventDefault();
 
-    if (!tztk || !lottery) {
+    if (isDonating == true) {
       console.error('Contracts are not loaded yet');
       return;
     }
@@ -40,7 +24,7 @@ const DonationHandler = () => {
       const amount = amountForDonate;
 
       // Call the async function to donate
-      await loadDonateToPrize(provider, chainId, lottery, tztk, amount, dispatch);
+      await loadDonateToPrize(provider, amount, dispatch);
       window.alert('Donation successful!');
     } catch (error) {
       console.error('Error donating:', error);
@@ -62,7 +46,7 @@ const DonationHandler = () => {
           onChange={(e) => setAmount(e.target.value)}
           placeholder="Amount"
         />
-        <button onClick={donateHandler} disabled={isDonating || !lottery || !tztk}>
+        <button onClick={donateHandler} disabled={isDonating}>
           {isDonating ? 'Donating...' : 'Donate'}
         </button>
       </div>

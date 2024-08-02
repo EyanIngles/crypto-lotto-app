@@ -1,39 +1,38 @@
 import { useEffect, useState, React, } from 'react';
 import { useSelector, useDispatch } from "react-redux";
+
 import { loadBuyEntries, loadProvider, loadNetwork, loadTztk, loadLottery } from '../interactions';
 
 const BuytEntries = () => {
     const [entries, setEntries] = useState(0);
     const [isBuyingEntries, setIsBuyingEntries] = useState(false);
+    const [amount, setAmount] = useState(0);
 
     const dispatch = useDispatch();
-    const provider = useSelector(state => state.provider.connection);
-    const chainId = useSelector(state => state.provider.network);
+
+
     const prizeBalance = useSelector((state) => state.lottery.lotteryPrize);
 
 
   const handleEnter = async (e) => {
     const provider = await loadProvider(dispatch);
     const chainId = await loadNetwork(dispatch, provider)
-      const tztk = await loadTztk(provider, chainId, dispatch);
-      const lottery = await loadLottery(provider, chainId, dispatch);
     e.preventDefault();
 
-    if (!prizeBalance) {
-      console.error('Contracts are not loaded yet');
-      return;
-    }
+    if (entries < 0) {
+      throw new Error('Contracts are not properly initialized');
+  }
 
     try {
-    setIsBuyingEntries(true);
-      const entriesIN = entries;
+      if(entries > 0) {
+        setAmount(entries)
+        loadBuyEntries(provider, chainId, amount, dispatch);
+        setAmount(0);
+      }
 
-      // Call the async function to donate
-      await loadBuyEntries(provider, chainId, entriesIN, tztk, lottery, dispatch);
-      window.alert(entriesIN);
     } catch (error) {
-      console.error('Error donating:', error);
-      window.alert('Donation rejected or insufficient funds, try again...');
+      console.error('Error entering lottory:', error);
+      window.alert('Entry rejected or insufficient funds, try again...');
     } finally {
         setIsBuyingEntries(false);
     }
@@ -59,7 +58,6 @@ const BuytEntries = () => {
               <div className="info-container">
                 <p className="info-text">Draws are triggered once the triggerAmount has been exceeded. This ensures that the draw can be triggered more frequently, giving participants a chance at a prize.</p>
               </div><hr></hr>
-              <p>donate handler here</p>
     </>
   );
 };

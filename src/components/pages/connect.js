@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ethers } from 'ethers';
-import { loadAccount, loadNetwork, loadProvider, loadTztk, loadLottery, loadLotteryPrize } from '../reducers/interactions';
+import { loadAccount, loadNetwork, loadProvider,
+  loadTztk, loadLottery, loadLotteryPrize, loadBuyEntries } from '../reducers/interactions';
 import { Button } from 'react-bootstrap';
 import Blockies from 'react-blockies';
 
@@ -18,6 +19,7 @@ const dispatch = useDispatch();
 const [balance, setBalance] = useState(0);
 const [tztkBalance, setTztkBalance] = useState(0);
 const [isLoading, setIsLoading] = useState(true);
+const [amount, setAmount] = useState(0);
 
   const loadBlockchain = async () => {
     try {
@@ -29,14 +31,13 @@ const [isLoading, setIsLoading] = useState(true);
       await loadNetwork(dispatch, provider);
       // Load account
       const account = await loadAccount(dispatch);
-      const tztk = await loadTztk(provider, chainId, dispatch);
-      const lottery = await loadLottery(provider, chainId, dispatch);
-      await loadLotteryPrize(provider, chainId, dispatch, lottery)
       // Load account balance in ether
       let balance = await provider.getBalance(account);
       balance = ethers.formatEther(balance);
       setBalance(balance.slice(0, 7));
-
+      const tztk = await loadTztk(provider, chainId, dispatch);
+      const lottery = await loadLottery(provider, chainId, dispatch);
+      await loadLotteryPrize(provider, chainId, dispatch, lottery)
       let tztkBalance = await tztk.balanceOf(account);
       tztkBalance = ethers.formatEther(tztkBalance);
       setTztkBalance(tztkBalance.slice(0, 10));
