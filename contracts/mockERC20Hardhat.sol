@@ -33,7 +33,7 @@ contract Token is CustomERC20, Ownable {
         address _developerWallet,
         address _prizePool
     )
-        CustomERC20("Blockchain Lottery", "BLOT")
+        CustomERC20("TreasureToken", "TRTK")
         Ownable(msg.sender)
     {
         require(_developerWallet != address(0), "Invalid tax recipient address");

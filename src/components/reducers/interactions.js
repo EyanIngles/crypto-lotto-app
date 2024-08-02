@@ -1,8 +1,8 @@
 import { setAccount, setNetwork, setProvider } from "./provider";
 import { ethers } from "ethers";
-import { setContractLottery, setLotteryPrize } from "./lotteryStore";
-import { setContractBLOT } from './blotStore';
-import BLOT_ABI from '../abis/BLOT_ABI.json';
+import { setContractLottery, setLotteryPrize, setDonateToPrize } from "./lotteryStore";
+import { setContractTztk } from './tztkStore';
+import TZTK_ABI from '../abis/TZTK_ABI.json';
 import LOTTERY_ABI from '../abis/LOTTERY_ABI.json';
 import config from '../abis/config.json';
 
@@ -50,20 +50,35 @@ export const loadLottery = async (provider, chainId, dispatch) => {
     return lottery
 }
 
-export const loadBLOT = async (provider, chainId, dispatch) => {
-    const blot = new ethers.Contract(config[chainId].BLOT.address, BLOT_ABI, provider)
+export const loadTztk = async (provider, chainId, dispatch) => {
+    const tztk = new ethers.Contract(config[chainId].tztk.address, TZTK_ABI, provider)
 
-    dispatch(setContractBLOT(blot))
+    dispatch(setContractTztk(tztk))
 
-    return blot
+    return tztk
 }
 
-export const loadLotteryPrize = async (provider, chainId, dispatch, lottery, blot) => {
+export const loadLotteryPrize = async (provider, chainId, dispatch, lottery, tztk) => {
     lottery = await loadLottery(provider, chainId, dispatch);
-    blot = await loadBLOT(provider, chainId, dispatch);
-    const lotteryPrizeBignumber = await blot.balanceOf(lottery.getAddress());
+    tztk = await loadTztk(provider, chainId, dispatch);
+    const lotteryPrizeBignumber = await tztk.balanceOf(lottery.getAddress());
     const lotteryPrize = ethers.formatEther(lotteryPrizeBignumber);
     dispatch(setLotteryPrize(lotteryPrize));
 
     return lotteryPrize
+}
+
+export const loadDonateToPrize = async (provider, chainId, lottery, tztk, amount, dispatch) => {
+    const signer = await provider.getSigner()
+    lottery = loadLottery(provider, chainId, dispatch);
+    tztk = loadTztk(provider, chainId, dispatch);
+    const transaction = await lottery.connect(signer).donateToPrize(tztk.address, { value: ethers.parseEther(amount.toString()) });
+    const result = await transaction.wait();
+
+    dispatch(setDonateToPrize(result));
+
+    return result;
+  };
+export const loadBuyEntries = async () => {
+    // am going to want to access tokens and lottery contract and send a value of however many tokens are needed for the entries.
 }

@@ -1,24 +1,28 @@
-/* Custom font */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f8ff;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
 
 .App {
   text-align: center;
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
+}
+
+.App-header {
+  background-color: #ffeb3b96; /* Bright yellow */
+  padding: 20px;
   color: #333;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
-  margin: -5%;
+  height: 80px;
 }
 
-.App-header {
-  background-color: #0044cc; /* Blue */
-  padding: 20px;
-  color: white;
+h1 {
+  font-size: 2.5em;
+  color: #004d40; /* Dark teal */
 }
 
 .main {
@@ -26,74 +30,111 @@
 }
 
 .lottery-info {
-  margin-bottom: 20px;
-  color: #000000; /* Gold */
+  background: #e8f5e9; /* Light green */
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 600px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.countdown-timer {
-  font-weight: bold;
+.prize-pool {
+  background: #0bee8c35; /* Bright yellow */
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.prize-pool-label {
+  font-size: 1.2em;
+}
+
+.prize-pool-amount {
+  font-size: 2em;
+  color: #004d40; /* Dark teal */
+}
+
+.btn-donate {
+  background-color: #003b4d; /* Dark teal */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.btn-enter {
+  background-color: #004d40; /* Dark teal */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-donate:hover, .btn-enter:hover {
+  background-color: #00332a; /* Darker teal */
 }
 
 .entry-form {
-  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .entry-form input {
   padding: 10px;
-  font-size: 16px;
+  font-size: 1em;
+  border: 2px solid #004d40; /* Dark teal */
+  border-radius: 5px;
   margin-right: 10px;
-  width: 200px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
 }
 
-.entry-form button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #28a745; /* Green */
+.info-container {
+  background: #e8f5e9; /* Light green */
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+  font-size: 1em;
+}
+
+.info-text {
+  color: #004d40; /* Dark teal */
+}
+
+.recent-winners, .faq {
+  margin: 20px auto;
+  max-width: 800px;
+}
+
+.faq-item {
+  background: #ffffff; /* White */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+}
+
+footer {
+  background: #004d40; /* Dark teal */
   color: white;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-}
-
-.entry-form button:hover {
-  background-color: #218838; /* Darker Green */
-}
-
-.recent-winners {
-  margin-top: 20px;
-  color: #333;
-}
-
-.recent-winners ul {
-  list-style: none;
-  padding: 0;
-}
-
-.recent-winners li {
-  padding: 5px 0;
-  background-color: #ffffff;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 5px;
-}
-
-.faq {
-  margin-top: 20px;
   padding: 20px;
-  background-color: #ffffff;
-  border-radius: 5px;
+  text-align: center;
 }
 
-.faq h2 {
-  margin-bottom: 10px;
+footer .advertisements p {
+  margin: 0;
 }
 
-.faq p {
-  text-align: left;
-  margin-bottom: 10px;
+.footer-content {
+  margin-top: 10px;
 }
+
+#current-year {
+  font-weight: bold;
+}
+
 
 @media (max-width: 600px) {
   .entry-form input {
@@ -108,18 +149,16 @@
   z-index: 1000; /* Ensures the element stays on top of other elements */
 }
 
-
-
 /* Styles for the account info box */
 .account-info {
-  background: linear-gradient(135deg, #018513 0%, #01bc87 100%); /* Gradient background */
+  background: linear-gradient(135deg, #ffeb3b96 0%, #01bc87 150%); /* Gradient background */
   border: none;
   border-radius: 15px; /* More rounded corners */
   padding: 15px;
   margin: 5px 0;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* More prominent shadow */
   color: #fff; /* White text color */
-  transition: transform 0.3s ease; /* Smooth transformation */
+  transition: transform 1s ease; /* Smooth transformation */
 }
 
 .account-info:hover {
@@ -130,101 +169,33 @@
   margin: 10px 0;
   font-weight: 700; /* Bold text */
 }
-/* Footer Styling */
-footer {
-  background-color: #265fd1; /* Dark background color for the footer */
-  color: #f0f0f0; /* Light text color for contrast */
-  text-align: center; /* Center-align text */
-  padding: 20px; /* Padding around the content */
-  border-top: 1px solid rgb(0, 211, 95); /* Slightly lighter border at the top */
-  position: relative; /* Position relative to accommodate potential absolute positioning inside */
+.donation-form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-.footer-content {
-  max-width: 1200px; /* Max width to center content */
-  margin: 0 auto; /* Center align the content horizontally */
-  padding: 0 20px; /* Horizontal padding */
+.donation-form input[type="number"] {
+  width: 80px; /* Small width */
+  padding: 8px;
+  font-size: 1em;
+  border: 2px solid #004d40; /* Dark teal */
+  border-radius: 5px;
+  margin-right: 10px; /* Space between input and button */
+  text-align: center; /* Center text */
 }
 
-.footer-content p {
-  margin: 0; /* Remove default margin from paragraphs */
-  font-size: 14px; /* Set a font size for readability */
+.donation-form button {
+  background-color: #004d40; /* Dark teal */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.advertisements {
-  margin-top: 20px; /* Space above the advertisements section */
-  padding: 10px; /* Padding around the advertisements section */
-  background-color: rgba(4, 150, 87, 0.45); /* Background color for the ad section */
-  border-radius: 8px; /* Rounded corners for a soft look */
-  overflow: hidden; /* Ensure contents do not overflow */
-}
-
-.advertisements p {
-  margin: 0 0 10px; /* Space below the text but not above */
-  font-size: 16px; /* Larger font size for visibility */
-  color: #f0f0f0; /* Light text color for readability */
-}
-
-.advertisements img {
-  max-width: 100%; /* Ensure the image fits within the container */
-  height: auto; /* Maintain aspect ratio */
-  border-radius: 4px; /* Slightly rounded corners for images */
-  display: block; /* Remove inline spacing issues */
-  margin: 0 auto; /* Center the image horizontally */
-}
-
-/* Responsive Design for Smaller Screens */
-@media (max-width: 768px) {
-  .footer-content {
-      padding: 0 10px; /* Reduce padding on smaller screens */
-  }
-
-  .advertisements p {
-      font-size: 14px; /* Slightly smaller text on smaller screens */
-  }
-}
-/* FAQ Section Styling */
-.faq {
-  background-color: #f9f9f9; /* Light background color */
-  padding: 20px; /* Padding around the section */
-  border-radius: 8px; /* Rounded corners */
-  max-width: 800px; /* Max width for better readability */
-  margin: 0 auto; /* Center align the section */
-}
-
-.faq h2 {
-  text-align: center; /* Center align the section heading */
-  color: #333; /* Dark color for the heading */
-  margin-bottom: 20px; /* Space below the heading */
-}
-
-.faq-item {
-  margin-bottom: 20px; /* Space between FAQ items */
-  padding: 10px; /* Padding inside each FAQ item */
-  border-bottom: 1px solid #ddd; /* Light border for separation */
-}
-
-.faq-item:last-child {
-  border-bottom: none; /* Remove border for the last item */
-}
-
-.faq-item h3 {
-  font-size: 18px; /* Font size for the question */
-  color: #555; /* Slightly lighter color for questions */
-  margin-bottom: 10px; /* Space below the question */
-}
-
-.faq-item p {
-  font-size: 16px; /* Font size for the answers */
-  color: #666; /* Color for the answers */
-  line-height: 1.6; /* Line height for readability */
-  text-align: center;
-}
-
-.faq-item code {
-  background-color: #eee; /* Background color for code snippets */
-  padding: 4px 6px; /* Padding around code snippets */
-  border-radius: 4px; /* Rounded corners for code snippets */
-  font-size: 14px; /* Font size for code snippets */
-  color: #d63384; /* Color for code snippets */
+.donation-form button:hover {
+  background-color: #00332a; /* Darker teal */
 }

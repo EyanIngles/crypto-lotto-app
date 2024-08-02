@@ -36,6 +36,7 @@ contract Lottery is Ownable {
     address[] public participants;
     address public winner;
     bool public winnerHasClaimed;
+    uint256 public totalWinningsClaimed;
     uint256 public winAmount;
     uint256 public maxEntries; //
     uint256 public triggerAmount; // how many tokens is needed to be in the contract to trigger a winner.
@@ -79,7 +80,7 @@ contract Lottery is Ownable {
             return _entries;
         }
     }
-    function callWinner() public returns(address){
+    function callWinner() public {
         require(triggerAmount >0,"Trigger amount to call winner has not been set");
         require(token.balanceOf(address(this)) >= triggerAmount,"Trigger amount has been been exceeded");
         if(winnerHasClaimed == false){
@@ -96,7 +97,6 @@ contract Lottery is Ownable {
         winner = participants[winnerNumber];
         winAmount = token.balanceOf(address(this));
         clearParticipants();
-        return winner;
         } else {
             emit LogMessage("Winner has not claimed or winner has not been anounced.");
         }
@@ -105,6 +105,7 @@ contract Lottery is Ownable {
         require(winnerHasClaimed == false, "previous winner has not claimed.");
         require(msg.sender == winner,"You are not the winner");
         winnerHasClaimed = true;
+        totalWinningsClaimed += winAmount;
         token.transfer(winner, winAmount);
 
     }

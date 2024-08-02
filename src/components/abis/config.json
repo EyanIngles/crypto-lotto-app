@@ -3,7 +3,7 @@
       "lottery": {
         "address": "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
       },
-        "BLOT": {
+        "tztk": {
           "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3"
         }
       },
@@ -11,7 +11,7 @@
         "lottery": {
           "address": "0x0C4B0Cb4436D97A9F43463085084f54c155484C9"
         },
-          "BLOT": {
+          "tztk": {
             "address": "0xd09a34Af96bF4984449338006f46F388C8F49506"
           }
       }

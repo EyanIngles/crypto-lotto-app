@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import provider from '../reducers/provider'
 import lottery from '../reducers/lotteryStore';
-import blot from '../reducers/blotStore';
+import TreasureToken from '../reducers/tztkStore';
 
 export default configureStore({
   reducer: {
     provider,
     lottery,
-    blot,
+    TreasureToken,
   },
     middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

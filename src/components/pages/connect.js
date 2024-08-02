@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ethers } from 'ethers';
-import { loadAccount, loadNetwork, loadProvider, loadBLOT, loadLottery, loadLotteryPrize } from '../reducers/interactions';
+import { loadAccount, loadNetwork, loadProvider, loadTztk, loadLottery, loadLotteryPrize } from '../reducers/interactions';
 import { Button } from 'react-bootstrap';
 import Blockies from 'react-blockies';
 
@@ -16,7 +16,7 @@ const dispatch = useDispatch();
 
   // useState for loading account and balance
 const [balance, setBalance] = useState(0);
-const [blotBalance, setBlotBalance] = useState(0);
+const [tztkBalance, setTztkBalance] = useState(0);
 const [isLoading, setIsLoading] = useState(true);
 
   const loadBlockchain = async () => {
@@ -29,7 +29,7 @@ const [isLoading, setIsLoading] = useState(true);
       await loadNetwork(dispatch, provider);
       // Load account
       const account = await loadAccount(dispatch);
-      const Blot = await loadBLOT(provider, chainId, dispatch);
+      const tztk = await loadTztk(provider, chainId, dispatch);
       const lottery = await loadLottery(provider, chainId, dispatch);
       await loadLotteryPrize(provider, chainId, dispatch, lottery)
       // Load account balance in ether
@@ -37,9 +37,12 @@ const [isLoading, setIsLoading] = useState(true);
       balance = ethers.formatEther(balance);
       setBalance(balance.slice(0, 7));
 
-      let blotBalance = await Blot.balanceOf(account);
-      blotBalance = ethers.formatEther(blotBalance);
-      setBlotBalance(blotBalance.slice(0, 10));
+      let tztkBalance = await tztk.balanceOf(account);
+      tztkBalance = ethers.formatEther(tztkBalance);
+      setTztkBalance(tztkBalance.slice(0, 10));
+      window.ethereum.on('accountsChanged', async () => {
+        loadBlockchain();
+      })
     } catch (error) {
       window.alert('MetaMask error, Please try again');
     }
@@ -63,11 +66,11 @@ const [isLoading, setIsLoading] = useState(true);
           seed={account}/>
           <p>{account.slice(0,6)}...{account.slice(36,42)}</p>
           <p>{balance} ETH</p>
-          <p>{blotBalance} BLOT</p>
+          <p>{tztkBalance} TZTK</p>
         </div>
         </>
       ) : (
-      <Button className="btn-success btn-lg" onClick={loadBlockchain}>Connect Wallet</Button>
+      <Button className="btn-warning btn-lg" onClick={loadBlockchain}>Connect Wallet</Button>
       )}
     </>
   );

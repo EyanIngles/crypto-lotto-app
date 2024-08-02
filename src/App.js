@@ -1,68 +1,37 @@
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import logo from "./images/BLOT (1).svg";
 import { Button } from "react-bootstrap";
+import  DonationHandler  from './components/reducers/handlers/donationHandler';
+import BuytEntries from "./components/reducers/handlers/buyEntriesHandler";
 import "./App.css";
-import { ethers } from "ethers";
 import Connect from "./components/pages/connect";
-//import { loadLotteryPrize } from './components/reducers/interactions';
-// need to import loadLottery and LoadBlot
 
 function App() {
-  const [participants, setParticipants] = useState(0);
-  const [entries, setEntries] = useState(0);
-  const [loadingBuyEntry, setLoadingBuyEntry] = useState(false);
-  // loading prize balance using useSelector
   const prizeBalance = useSelector((state) => state.lottery.lotteryPrize);
-
-  const donateHandler = () => {
-    console.log("hello");
-  };
-
-  const handleEnter = () => {
-    console.log(entries);
-  };
 
   return (
     <div className="App">
       <header className="App-header">
         <div className="connectArea">
-          <Connect></Connect>
+          <Connect />
         </div>
         <img src={logo} className="App-logo" alt="logo" />
-        <h1>Lottery App</h1>
+        <h1>Treasure Draw</h1>
       </header>
       <main className="main">
         <section className="lottery-info">
           {prizeBalance ? (
-            <>
-              <h2>Current Jackpot: {prizeBalance} BLOT</h2>
-              <Button onClick={donateHandler}>Donate to Prize Here</Button>
-              <hr></hr>
-              <section className="entry-form">
-                <h2>Enter the Lottery</h2>
-                <input
-                  type="number"
-                  value={entries}
-                  onChange={(e) => setEntries(e.target.value)}
-                  placeholder="Number of Entries"
-                />
-                <button onClick={handleEnter}>Enter</button>
-              </section>
-              <p>
-                Next draw in: <span className="countdown-timer">24:00:00</span>
-              </p>
-            </>
+           <>
+           
+           </>
           ) : (
-            <>
-              <h2>Please Connect to Blockchain to See Prize</h2>
-              <hr></hr>
-            </>
+            <h2>Please Connect to Blockchain to See Prize</h2>
           )}
         </section>
         <section className="recent-winners">
-          <h2>Total Winnings Recieved!</h2>
-          <h1>$$$$$$$</h1>
+          <h2>Total Winnings Received!</h2>
+          <h1>**event listener**</h1>
         </section>
         <section className="faq">
           <h2>Frequently Asked Questions</h2>
@@ -83,21 +52,18 @@ function App() {
             </p>
           </div>
         </section>
-        <>
-          <footer>
-            <div className="advertisements">
-              -- Insert advertisement code or images here --
-              <p>Advertisement:</p>
-              <p>image here</p>
-              <div className="footer-content">
-                <p>
-                  &copy; <span id="current-year"></span> Your Company Name. All
-                  rights reserved.
-                </p>
-              </div>
+        <footer>
+          <div className="advertisements">
+            <p>Advertisement:</p>
+            <p>image here</p>
+            <div className="footer-content">
+              <p>
+                 <span id="current-year"></span> TreasureDraw. All
+                rights reserved.
+              </p>
             </div>
-          </footer>
-        </>
+          </div>
+        </footer>
       </main>
     </div>
   );

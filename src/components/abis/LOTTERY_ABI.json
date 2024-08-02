@@ -148,13 +148,7 @@
   {
     "inputs": [],
     "name": "callWinner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -364,6 +358,19 @@
   {
     "inputs": [],
     "name": "timeStarter",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalWinningsClaimed",
     "outputs": [
       {
         "internalType": "uint256",
