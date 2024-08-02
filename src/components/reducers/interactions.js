@@ -1,6 +1,7 @@
 import { setAccount, setNetwork, setProvider } from "./provider";
-import { setContractLottery, setLotteryPrize, setDonateToPrize, setEntries } from "./lotteryStore";
-import { setContractTztk, tztk } from './tztkStore';
+import { setContractLottery, setLotteryPrize,
+    setDonateToPrize, setEntries } from "./lotteryStore";
+import { setContractTztk, setName, setSymbol } from './tztkStore';
 import { ethers } from "ethers";
 import TZTK_ABI from '../abis/TZTK_ABI.json';
 import LOTTERY_ABI from '../abis/LOTTERY_ABI.json';
@@ -57,6 +58,16 @@ export const loadTztk = async (provider, chainId, dispatch) => {
 
     return tztk
 }
+export const loadNameAndSymbol = async (provider, chainId, dispatch, tztk) => {
+    tztk = await loadTztk(provider, chainId, dispatch);
+    const name = await tztk.name();
+    const symbol = await tztk.symbol();
+
+    dispatch(setName(name))
+    dispatch(setSymbol(symbol))
+
+    return name, symbol
+}
 
 export const loadLotteryPrize = async (provider, chainId, dispatch, lottery, tztk) => {
     lottery = await loadLottery(provider, chainId, dispatch);
@@ -72,6 +83,7 @@ export const loadDonateToPrize = async (amount, provider, dispatch) => {
     const signer = provider.getSigner();
     const chainId = await loadNetwork(provider, dispatch);
     const lottery = await loadLottery(provider, chainId, dispatch);
+    const tztk = await loadTztk(provider, chainId, dispatch);
     const bigIntNumber = ethers.toBigInt(amount).toString()
     const lotteryAddress = await lottery.getAddress();
     const donation = await tztk.connect(signer).tranfer(lotteryAddress, {value:bigIntNumber})
@@ -80,31 +92,15 @@ export const loadDonateToPrize = async (amount, provider, dispatch) => {
     dispatch(setDonateToPrize(donation));
     return donation;
   };
-  export const loadBuyEntries = async (provider, chainId, entriesIN, tztk, lottery, dispatch) => {
-    try {
-        provider = loadProvider(dispatch)
-        chainId = loadNetwork(provider, dispatch)
-        const signer = provider.getSigner();
-        // Load contracts
-        tztk = await loadTztk(provider, chainId, dispatch);
+  export const loadBuyEntries = async (provider, chainId, dispatch) => {
 
-        // Fetch the price of entry from the contract
-        const priceOfEntrySmallNumber = await lottery.priceOfEntry(); // Ensure this call is awaited
-        const priceOfEntry = ethers.parseUnits(priceOfEntrySmallNumber.toString(), 'ether'); // Convert to BigNumber
 
-        // Calculate the total amount required for the entries
-        const totalAmount = priceOfEntry * ethers.toBigInt(entriesIN); // Calculate total cost in wei
+    const lottery = await loadLottery(provider, chainId, dispatch);
 
-        // Send the transaction with the total amount as value
-        const enterLotto = await lottery.connect(signer).enterReward(tztk.getAddress(), totalAmount );
-        await enterLotto.wait();
 
-        // Dispatch the result
-        dispatch(setEntries(enterLotto));
+    const transaction = await lottery.priceOfEntry();
+    const result = await transaction.wait();
 
-        return enterLotto;
-    } catch (error) {
-        console.error('Error buying entries:', error);
-        throw error; // Optionally rethrow or handle the error as needed
-    }
+    dispatch(setEntries(result));
+    return result;
 };

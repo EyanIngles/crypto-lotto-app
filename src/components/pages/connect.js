@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ethers } from 'ethers';
 import { loadAccount, loadNetwork, loadProvider,
-  loadTztk, loadLottery, loadLotteryPrize, loadBuyEntries } from '../reducers/interactions';
+  loadTztk, loadLottery, loadLotteryPrize, loadNameAndSymbol } from '../reducers/interactions';
 import { Button } from 'react-bootstrap';
 import Blockies from 'react-blockies';
 
@@ -38,6 +38,7 @@ const [amount, setAmount] = useState(0);
       const tztk = await loadTztk(provider, chainId, dispatch);
       const lottery = await loadLottery(provider, chainId, dispatch);
       await loadLotteryPrize(provider, chainId, dispatch, lottery)
+      await loadNameAndSymbol(provider, chainId, dispatch, tztk)
       let tztkBalance = await tztk.balanceOf(account);
       tztkBalance = ethers.formatEther(tztkBalance);
       setTztkBalance(tztkBalance.slice(0, 10));
