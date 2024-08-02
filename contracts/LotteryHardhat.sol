@@ -50,7 +50,7 @@ contract Lottery is Ownable {
     constructor(uint256 _PriceForEntry, IERC20 _token) Ownable(msg.sender) {
         token = _token; //writes a token address/contract to this variable.
         priceOfEntry = _PriceForEntry;
-        maxEntries = 10;
+        maxEntries = 10 *_PriceForEntry;
         triggerAmount = 10000;
         winnerHasClaimed = false;
     }
@@ -60,24 +60,25 @@ contract Lottery is Ownable {
         _token.safeTransferFrom(msg.sender, address(this), _amount);
     }
 
-    function enterReward(IERC20 _token, uint256 _entries) public payable returns (uint256) {
+    function enterReward(IERC20 _token, uint256 _priceOfEntry) public payable returns (uint256) {
         require(_token == token,"Please use the same tokens as the prizePool");
-        require(_entries > 0 && _entries < maxEntries,"Entries must be more then 0");
-        require(rewardParticipants[msg.sender] + _entries <= maxEntries,"You already have the maximum entries for this draw");
-        require(_token.balanceOf(msg.sender) >= _entries * priceOfEntry,"Not enough for entry.");
+        require(_priceOfEntry > 0 && _priceOfEntry < maxEntries,"Entries must be more then 0");
+        require(rewardParticipants[msg.sender] + _priceOfEntry <= maxEntries,"You already have the maximum entries for this draw");
+        require(_token.balanceOf(msg.sender) >= _priceOfEntry ,"Not enough for entry.");
         // need to add a requirement to make sure the person calling this function does not have over the limit, will need to call check entries and use a statement off of that.
-        _token.safeTransferFrom(msg.sender, address(this), (priceOfEntry * _entries));
-        for(uint256 i = 0; i <= _entries; i++ ) { // The winner will be randomised by a number and the array of address that will corrolate with the number will be the winner.
+        uint256 numEntries = _priceOfEntry / priceOfEntry;
+        _token.safeTransferFrom(msg.sender, address(this), ( _priceOfEntry));
+        for(uint256 i = 0; i <= numEntries; i++ ) { // The winner will be randomised by a number and the array of address that will corrolate with the number will be the winner.
             participants.push(msg.sender);
         }
-        rewardParticipants[msg.sender] += _entries;
+        rewardParticipants[msg.sender] += _priceOfEntry;
         if(token.balanceOf(address(this)) >= triggerAmount) {
-            emit NewEntry(msg.sender, _entries);
+            emit NewEntry(msg.sender, _priceOfEntry);
             callWinner();
-            return _entries;
+            return _priceOfEntry;
         } else {
-            emit NewEntry(msg.sender, _entries);
-            return _entries;
+            emit NewEntry(msg.sender, _priceOfEntry);
+            return _priceOfEntry;
         }
     }
     function callWinner() public {

@@ -23,7 +23,7 @@ function App() {
         <section className="lottery-info">
           {prizeBalance ? (
            <>
-           
+           <BuytEntries></BuytEntries>
            </>
           ) : (
             <h2>Please Connect to Blockchain to See Prize</h2>

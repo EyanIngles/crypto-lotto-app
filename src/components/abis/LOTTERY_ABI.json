@@ -243,7 +243,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_entries",
+        "name": "_priceOfEntry",
         "type": "uint256"
       }
     ],

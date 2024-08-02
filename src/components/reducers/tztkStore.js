@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const tztk = createSlice({
     name: 'tztk',
     initialState: {
-        tztkContract: null, // Use `null` instead of `0` for uninitialized state
+        tztkContract: null,
     },
     reducers: {
         setContractTztk: (state, action) => {

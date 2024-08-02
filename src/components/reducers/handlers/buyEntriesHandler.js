@@ -1,6 +1,6 @@
 import { useEffect, useState, React, } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { loadBuyEntries } from '../interactions';
+import { loadBuyEntries, loadProvider, loadNetwork, loadTztk, loadLottery } from '../interactions';
 
 const BuytEntries = () => {
     const [entries, setEntries] = useState(0);
@@ -9,26 +9,28 @@ const BuytEntries = () => {
     const dispatch = useDispatch();
     const provider = useSelector(state => state.provider.connection);
     const chainId = useSelector(state => state.provider.network);
-    const lottery = useSelector(state => state.lottery.lotteryContract);
-    const tztk = useSelector(state => state.tztk.tztkContract);
     const prizeBalance = useSelector((state) => state.lottery.lotteryPrize);
 
 
   const handleEnter = async (e) => {
+    const provider = await loadProvider(dispatch);
+    const chainId = await loadNetwork(dispatch, provider)
+      const tztk = await loadTztk(provider, chainId, dispatch);
+      const lottery = await loadLottery(provider, chainId, dispatch);
     e.preventDefault();
 
-    if (!tztk || !lottery) {
+    if (!prizeBalance) {
       console.error('Contracts are not loaded yet');
       return;
     }
 
     try {
-        setIsBuyingEntries(true);
+    setIsBuyingEntries(true);
       const entriesIN = entries;
 
       // Call the async function to donate
-      await loadBuyEntries(provider, chainId, lottery, tztk, entriesIN, dispatch);
-      window.alert('Donation successful!');
+      await loadBuyEntries(provider, chainId, entriesIN, tztk, lottery, dispatch);
+      window.alert(entriesIN);
     } catch (error) {
       console.error('Error donating:', error);
       window.alert('Donation rejected or insufficient funds, try again...');
