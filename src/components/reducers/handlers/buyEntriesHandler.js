@@ -1,47 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { ethers } from 'ethers';
-import { loadProvider, loadNetwork, loadTztk, loadLottery, loadBuyEntries } from '../interactions';
+import { loadBuyEntries } from '../interactions';
 
 const BuyEntries = () => {
     const [entries, setEntries] = useState(0);
     const [isBuyingEntries, setIsBuyingEntries] = useState(false);
-    const [amount, setAmount] = useState(0);
-    const [lottery, setLottery] = useState(null);
-    const [tztk, setTztk] = useState(null);
-    const [provider, setProvider] = useState(null);
-    const [chainId, setChainId] = useState(null);
 
     const dispatch = useDispatch();
-
-    const providerState = useSelector(state => state.provider.connection);
-    const chainIdState = useSelector(state => state.provider.network);
-    const lotteryState = useSelector(state => state.lottery.lotteryContract);
-    const prizeBalance = useSelector(state => state.lottery.lotteryPrize);
-
-    useEffect(() => {
-        if (providerState) setProvider(providerState);
-        if (chainIdState) setChainId(chainIdState);
-        if (lotteryState) setLottery(lotteryState);
-    }, [providerState, chainIdState, lotteryState]);
+    const prizeBalance = useSelector((state) => state.lottery.lotteryPrize);
+    const provider = useSelector(state => state.provider.connection);
+    const chainId = useSelector(state => state.provider.network);
+    const token = useSelector((state) => state.token);
+    const lottery = useSelector((state) => state.lottery);
 
     const handleEnter = async (e) => {
         e.preventDefault();
-
-        if (!lottery || entries <= 0) {
-            window.alert('Contracts are not properly initialized or invalid entries.');
-            return;
-        }
+        setIsBuyingEntries(true);
 
         try {
-            setIsBuyingEntries(true);
-            setAmount(entries);
-            await loadBuyEntries(provider, chainId, lottery, dispatch);
-            setEntries(0);
-            setAmount(0);
+            await loadBuyEntries(provider, chainId, token, entries, lottery, dispatch);
         } catch (error) {
-            console.error('Error entering lottery:', error);
-            window.alert('Entry rejected or insufficient funds, try again...');
+            console.error("Error buying entries:", error);
         } finally {
             setIsBuyingEntries(false);
         }

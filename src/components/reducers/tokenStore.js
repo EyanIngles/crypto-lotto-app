@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export const tztk = createSlice({
-    name: 'tztk',
+export const token = createSlice({
+    name: 'token',
     initialState: {
-        tztkContract: null,
+        tokenContract: null,
         name: "",
         symbol: "",
     },
     reducers: {
-        setContractTztk: (state, action) => {
-            state.tztkContract = action.payload;
+        setContractToken: (state, action) => {
+            state.tokenContract = action.payload;
         },
         setName: (state, action) => {
             state.name = action.payload;
@@ -20,6 +20,6 @@ export const tztk = createSlice({
     },
 });
 
-export const { setContractTztk, setName, setSymbol } = tztk.actions;
+export const { setContractToken, setName, setSymbol } = token.actions;
 
-export default tztk.reducer;
+export default token.reducer;

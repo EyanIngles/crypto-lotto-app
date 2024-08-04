@@ -55,32 +55,31 @@ contract Lottery is Ownable {
         winnerHasClaimed = false;
     }
 
-    function donateToPrizeFund(IERC20 _token, uint256 _amount) public payable {
+    function donateToPrizeFund(uint256 _amount) public payable {
         require(_amount != 0, "please donate more than 0");
-        _token.safeTransferFrom(msg.sender, address(this), _amount);
+        token.safeTransferFrom(msg.sender, address(this), _amount);
     }
 
-    function enterReward(IERC20 _token, uint256 _priceOfEntry) public payable returns (uint256) {
-        require(_token == token,"Please use the same tokens as the prizePool");
-        require(_priceOfEntry > 0 && _priceOfEntry < maxEntries,"Entries must be more then 0");
-        require(rewardParticipants[msg.sender] + _priceOfEntry <= maxEntries,"You already have the maximum entries for this draw");
-        require(_token.balanceOf(msg.sender) >= _priceOfEntry ,"Not enough for entry.");
-        // need to add a requirement to make sure the person calling this function does not have over the limit, will need to call check entries and use a statement off of that.
-        uint256 numEntries = _priceOfEntry / priceOfEntry;
-        _token.safeTransferFrom(msg.sender, address(this), ( _priceOfEntry));
-        for(uint256 i = 0; i <= numEntries; i++ ) { // The winner will be randomised by a number and the array of address that will corrolate with the number will be the winner.
-            participants.push(msg.sender);
-        }
-        rewardParticipants[msg.sender] += _priceOfEntry;
-        if(token.balanceOf(address(this)) >= triggerAmount) {
-            emit NewEntry(msg.sender, _priceOfEntry);
-            callWinner();
-            return _priceOfEntry;
-        } else {
-            emit NewEntry(msg.sender, _priceOfEntry);
-            return _priceOfEntry;
-        }
+    function enterReward(uint256 _entries) public payable returns (uint256) {
+    require(_entries > 0 && _entries < maxEntries, "Entries must be between 1 and maxEntries");
+    require(rewardParticipants[msg.sender] + _entries <= maxEntries, "Maximum entries exceeded for this draw");
+    require(token.balanceOf(msg.sender) >= _entries * priceOfEntry, "Insufficient balance for entry");
+    token.approve(address(this), _entries * priceOfEntry);
+    token.safeTransferFrom(msg.sender, address(this), (priceOfEntry * _entries));
+    for (uint256 i = 0; i < _entries; i++) {
+        participants.push(msg.sender);
     }
+    rewardParticipants[msg.sender] += _entries;
+    if (token.balanceOf(address(this)) >= triggerAmount) {
+        emit NewEntry(msg.sender, _entries);
+        callWinner();
+        return _entries;
+    } else {
+        emit NewEntry(msg.sender, _entries);
+        return _entries;
+    }
+}
+
     function callWinner() public {
         require(triggerAmount >0,"Trigger amount to call winner has not been set");
         require(token.balanceOf(address(this)) >= triggerAmount,"Trigger amount has been been exceeded");
@@ -145,5 +144,5 @@ contract Lottery is Ownable {
         }
     }
 
-    receive() external payable { }
+    receive() external payable { } //no withdraw function
 }

@@ -7,6 +7,8 @@ export const lottery = createSlice({
         lotteryPrize: 0,
         donateToPrize: 0,
         entries: 0,
+        checkEntryPrice: 0,
+
     },
     reducers: {
         setContractLottery: (state, action) => {
@@ -21,9 +23,12 @@ export const lottery = createSlice({
         setEntries: (state, action) => {
             state.entries = action.payload
         },
+        setCheckPrice: (state, action) => {
+            state.checkEntryPrice = action.payload
+        },
     }
 })
 
-export const { setContractLottery, setLotteryPrize, setDonateToPrize, setEntries } = lottery.actions;
+export const { setContractLottery, setLotteryPrize, setDonateToPrize, setEntries, setCheckPrice } = lottery.actions;
 
 export default lottery.reducer;

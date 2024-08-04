@@ -25,13 +25,13 @@ async function main() {
     const lottery = await ethers.getContractAt('Token', config[chainId].lottery.address)
     console.log(`lottery data fetched: ${await lottery.getAddress()} \n`)
 
-    const tztk = await ethers.getContractAt('Token', config[chainId].tztk.address)
-    console.log(`tztk token fetched: ${await tztk.getAddress()} \n`)
+    const token = await ethers.getContractAt('Token', config[chainId].token.address)
+    console.log(`token token fetched: ${await token.getAddress()} \n`)
 
 
     let transaction, tokenMinting
 
-    transaction = await tztk.connect(deployer).transfer(await lottery.getAddress(), tokens(1000))
+    transaction = await token.connect(deployer).transfer(await lottery.getAddress(), tokens(1000))
     await transaction.wait()
 
   console.log(`Finished! \n`)

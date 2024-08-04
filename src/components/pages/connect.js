@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ethers } from 'ethers';
 import { loadAccount, loadNetwork, loadProvider,
-  loadTztk, loadLottery, loadLotteryPrize, loadNameAndSymbol } from '../reducers/interactions';
+  loadToken, loadLottery, loadLotteryPrize, loadNameAndSymbol, loadEntryPrice } from '../reducers/interactions';
 import { Button } from 'react-bootstrap';
 import Blockies from 'react-blockies';
 
@@ -17,12 +17,11 @@ const dispatch = useDispatch();
 
   // useState for loading account and balance
 const [balance, setBalance] = useState(0);
-const [tztkBalance, setTztkBalance] = useState(0);
+const [tokenBalance, setTokenBalance] = useState(0);
 const [isLoading, setIsLoading] = useState(true);
 const [amount, setAmount] = useState(0);
 
   const loadBlockchain = async () => {
-    try {
       // Load provider
     const provider = await loadProvider(dispatch);
     const chainId = await loadNetwork(dispatch, provider)
@@ -35,19 +34,18 @@ const [amount, setAmount] = useState(0);
       let balance = await provider.getBalance(account);
       balance = ethers.formatEther(balance);
       setBalance(balance.slice(0, 7));
-      const tztk = await loadTztk(provider, chainId, dispatch);
+      const token = await loadToken(provider, chainId, dispatch);
       const lottery = await loadLottery(provider, chainId, dispatch);
       await loadLotteryPrize(provider, chainId, dispatch, lottery)
-      await loadNameAndSymbol(provider, chainId, dispatch, tztk)
-      let tztkBalance = await tztk.balanceOf(account);
-      tztkBalance = ethers.formatEther(tztkBalance);
-      setTztkBalance(tztkBalance.slice(0, 10));
+      await loadNameAndSymbol(provider, chainId, dispatch, token)
+
+      let tokenBalance = await token.balanceOf(account);
+      tokenBalance = ethers.formatEther(tokenBalance);
+      setTokenBalance(tokenBalance.slice(0, 10));
       window.ethereum.on('accountsChanged', async () => {
         loadBlockchain();
       })
-    } catch (error) {
-      window.alert('MetaMask error, Please try again');
-    }
+      const entryPrice = await loadEntryPrice(provider, chainId, dispatch, lottery);
     setIsLoading(false);
   };
 
@@ -68,7 +66,7 @@ const [amount, setAmount] = useState(0);
           seed={account}/>
           <p>{account.slice(0,6)}...{account.slice(36,42)}</p>
           <p>{balance} ETH</p>
-          <p>{tztkBalance} TZTK</p>
+          <p>{tokenBalance} TZTK</p>
         </div>
         </>
       ) : (

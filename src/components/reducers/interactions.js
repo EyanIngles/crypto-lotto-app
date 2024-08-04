@@ -1,22 +1,20 @@
 import { setAccount, setNetwork, setProvider } from "./provider";
 import { setContractLottery, setLotteryPrize,
-    setDonateToPrize, setEntries } from "./lotteryStore";
-import { setContractTztk, setName, setSymbol } from './tztkStore';
+    setDonateToPrize, setEntries, setCheckPrice } from "./lotteryStore";
+import { setContractToken, setName, setSymbol } from './tokenStore';
 import { ethers } from "ethers";
-import TZTK_ABI from '../abis/TZTK_ABI.json';
+import TOKEN_ABI from '../abis/TOKEN_ABI.json';
 import LOTTERY_ABI from '../abis/LOTTERY_ABI.json';
 import config from '../abis/config.json';
 
 
 export const loadProvider = async (dispatch) => {
-    try{
-    const provider = new ethers.BrowserProvider(window.ethereum)
-    dispatch(setProvider(provider))
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        //const provider = new ethers.JsonRpcProvider('http://127.0.0.1:8545/') //hardhat HTTP
+        dispatch(setProvider(provider))
 
     return provider;
-    } catch(err) {
-        window.alert('provider unable to be located')
-    }}
+}
 
 export const loadAccount = async (dispatch) => {
 //connecting to meta mask with a try and catch to catch an error if metamask if not installed
@@ -51,17 +49,16 @@ export const loadLottery = async (provider, chainId, dispatch) => {
     return lottery
 }
 
-export const loadTztk = async (provider, chainId, dispatch) => {
-    const tztk = new ethers.Contract(config[chainId].tztk.address, TZTK_ABI, provider)
+export const loadToken = async (provider, chainId, dispatch) => {
+    const token = new ethers.Contract(config[chainId].token.address, TOKEN_ABI, provider)
+    dispatch(setContractToken(token))
 
-    dispatch(setContractTztk(tztk))
-
-    return tztk
+    return token
 }
-export const loadNameAndSymbol = async (provider, chainId, dispatch, tztk) => {
-    tztk = await loadTztk(provider, chainId, dispatch);
-    const name = await tztk.name();
-    const symbol = await tztk.symbol();
+export const loadNameAndSymbol = async (provider, chainId, dispatch, token) => {
+    token = await loadToken(provider, chainId, dispatch);
+    const name = await token.name();
+    const symbol = await token.symbol();
 
     dispatch(setName(name))
     dispatch(setSymbol(symbol))
@@ -69,38 +66,68 @@ export const loadNameAndSymbol = async (provider, chainId, dispatch, tztk) => {
     return name, symbol
 }
 
-export const loadLotteryPrize = async (provider, chainId, dispatch, lottery, tztk) => {
+export const loadLotteryPrize = async (provider, chainId, dispatch, lottery, token) => {
     lottery = await loadLottery(provider, chainId, dispatch);
-    tztk = await loadTztk(provider, chainId, dispatch);
-    const lotteryPrizeBignumber = await tztk.balanceOf(lottery.getAddress());
+    token = await loadToken(provider, chainId, dispatch);
+    const lotteryPrizeBignumber = await token.balanceOf(lottery.getAddress());
     const lotteryPrize = ethers.formatEther(lotteryPrizeBignumber);
     dispatch(setLotteryPrize(lotteryPrize));
 
     return lotteryPrize
 }
+export const loadEntryPrice = async (provider, chainId, dispatch, lottery) => {
+    lottery = await loadLottery(provider, chainId, dispatch);
+    const entryPrice = (await lottery.priceOfEntry()).toString(); // Convert BigNumber to string
+    dispatch(setCheckPrice(entryPrice));
+    return entryPrice;
+}
 
-export const loadDonateToPrize = async (amount, provider, dispatch) => {
-    const signer = provider.getSigner();
-    const chainId = await loadNetwork(provider, dispatch);
-    const lottery = await loadLottery(provider, chainId, dispatch);
-    const tztk = await loadTztk(provider, chainId, dispatch);
-    const bigIntNumber = ethers.toBigInt(amount).toString()
-    const lotteryAddress = await lottery.getAddress();
-    const donation = await tztk.connect(signer).tranfer(lotteryAddress, {value:bigIntNumber})
-    await donation.wait();
+export const loadDonateToPrize = async (provider, amount, lottery, token, chainId, dispatch) => {
+    const signer = await provider.getSigner();
+    lottery = await loadLottery(provider, chainId, dispatch);
+    token = await loadToken(provider, chainId, dispatch);
 
-    dispatch(setDonateToPrize(donation));
-    return donation;
-  };
-  export const loadBuyEntries = async (provider, chainId, dispatch) => {
+    const bigAmount = ethers.parseUnits(amount.toString(), 18); // Adjust the decimals as per your token
 
+        const approveTx = await token.connect(signer).approve(lottery.getAddress(), bigAmount);
+        await approveTx.wait();
+        console.log("Tokens approved for transfer");
 
-    const lottery = await loadLottery(provider, chainId, dispatch);
+    console.log("Provider:", provider);
+    console.log("Chain ID:", chainId);
+    console.log("Token:", token);
+    console.log("Lottery:", lottery);
+    console.log("Amount:", amount);
+    console.log("Big Amount:", bigAmount.toString());
 
+    try {
+        const result = await lottery.connect(signer).donateToPrizeFund({value: bigAmount});
+        dispatch(setEntries(result));
+    } catch (error) {
+        console.error("Error buying entries:", error);
+    }
+  }
+  export const loadBuyEntries = async (provider, chainId, token, entries, lottery, dispatch) => {
+    const signer = await provider.getSigner();
+    chainId = await loadNetwork(dispatch, provider)
+    lottery = await loadLottery(provider, chainId, dispatch);
+    token = await loadToken(provider, chainId, dispatch);
+    const entryPrice = await loadEntryPrice(provider, chainId, dispatch, lottery)
+    const amount = entries.toString();
+    const bigAmount = (amount * entryPrice).toString();
 
-    const transaction = await lottery.priceOfEntry();
-    const result = await transaction.wait();
+    console.log("Provider:", provider);
+    console.log("Chain ID:", chainId);
+    console.log("Token:", token);
+    console.log("Lottery:", lottery);
+    console.log("Amount:", entries);
+    console.log("Big Amount:", bigAmount);
 
-    dispatch(setEntries(result));
-    return result;
-};
+        const approveTx = await token.connect(signer).approve(lottery.getAddress(), bigAmount);
+        await approveTx.wait();
+        console.log("Tokens approved for transfer");
+
+        const tx = await lottery.connect(signer).enterReward(amount)
+        const result = await tx.wait()
+        dispatch(setEntries(result));
+}

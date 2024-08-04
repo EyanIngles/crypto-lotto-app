@@ -219,11 +219,6 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC20",
-        "name": "_token",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
@@ -237,13 +232,8 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC20",
-        "name": "_token",
-        "type": "address"
-      },
-      {
         "internalType": "uint256",
-        "name": "_priceOfEntry",
+        "name": "_entries",
         "type": "uint256"
       }
     ],

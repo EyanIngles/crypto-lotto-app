@@ -1,16 +1,14 @@
 import { useState } from "react";
-import Connect from "./components/pages/connect";
 import { useSelector } from "react-redux";
 import logo from "./images/BLOT (1).svg";
 import { Button } from "react-bootstrap";
-import { ethers } from "ethers";
 import  DonationHandler  from './components/reducers/handlers/donationHandler';
 import BuytEntries from "./components/reducers/handlers/buyEntriesHandler";
 import "./App.css";
+import Connect from "./components/pages/connect";
 
 function App() {
   const prizeBalance = useSelector((state) => state.lottery.lotteryPrize);
-  const lottery = useSelector((state) => state.lottery.lotteryContract);
 
   return (
     <div className="App">
