@@ -13,12 +13,6 @@ async function main() {
     const tokenAddress = await token.getAddress();
     console.log(` token Deployed!!: ${tokenAddress}`);
 
-    console.log(`Deploying customERC20 contract....`);
-    const CUSTERC20 = await hre.ethers.getContractFactory("CustomERC20");
-    const custERC20 = await CUSTERC20.deploy("customERC20", "CERC");
-    const custERC20Address = await custERC20.getAddress();
-    console.log(`custom ERC20 token Deployed!!: ${custERC20Address}`);
-
 }
 
 main().catch((error) => {

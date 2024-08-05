@@ -9,10 +9,10 @@
       },
       "11155111": {
         "lottery": {
-          "address": ""
+          "address": "0x06bA7C71e7c5E80B808d4a9C933a04860D97Fc20"
         },
           "token": {
-            "address": ""
+            "address": "0x324fb11437a7026B5B09Cfd992Ece4f5AEfeE8f2"
           }
       }
     }
