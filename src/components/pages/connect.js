@@ -68,9 +68,7 @@ let provider, chainId
         <Blockies
           className='blockie'
           seed={account}/>
-          <p>{account.slice(0,6)}...{account.slice(36,42)}</p>
-          <p>{balance} ETH</p>
-          <p>{tokenBalance} TZTK</p>
+          <p>{account.slice(0,6)}...{account.slice(36,42)}<br/>{balance} ETH<br/>{tokenBalance} TZTK</p>
         </div>
         </>
       ) : (

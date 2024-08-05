@@ -160,6 +160,22 @@ footer .advertisements p {
   color: #fff; /* White text color */
   transition: transform 1s ease; /* Smooth transformation */
 }
+@media only screen and (max-width: 768px) {
+  .account-info {
+    background: linear-gradient(135deg, #f2db0e59 0%, #01bc876b 150%); /* Gradient background */
+    border: none;
+    border-radius: 40%; /* More rounded corners */
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+    color: #fff; /* White text color */
+    transition: transform 2s ease; /* Smooth transformation */
+  }
+  .account-info p {
+    margin: 2px 0;
+    font-weight: 200; /* Bold text */
+  }
+}
 
 .account-info:hover {
   transform: scale(1.05); /* Slightly enlarge on hover */
