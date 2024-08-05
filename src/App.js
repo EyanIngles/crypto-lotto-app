@@ -11,7 +11,6 @@ function App() {
   const prizeBalance = useSelector((state) => state.lottery.lotteryPrize);
   const totalWinnings = useSelector((state) => state.lottery.totalWinnings);
   const chainId = useSelector((state) => state.provider.chainId)
-  console.log(chainId)
 
 
   return (
@@ -79,7 +78,7 @@ function App() {
               {chainId ? (
                 <>{chainId ===  11155111 ?
                   (<code> Ethereum:</code>):
-                  (<code> Sepolia:</code>)}
+                  (<code> Sepolia: <strong>0x324fb11437a7026B5B09Cfd992Ece4f5AEfeE8f2</strong></code>)}
                   </>
               ) : (
                 <>
