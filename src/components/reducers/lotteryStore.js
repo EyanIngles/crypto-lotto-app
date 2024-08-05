@@ -8,7 +8,11 @@ export const lottery = createSlice({
         donateToPrize: 0,
         entries: 0,
         checkEntryPrice: 0,
-
+        triggerAmount: 0,
+        currentPrizeWinner: null,
+        prizeBeenClaimed: false,
+        currentWinAmount: 0,
+        totalWinnings: 0,
     },
     reducers: {
         setContractLottery: (state, action) => {
@@ -26,9 +30,26 @@ export const lottery = createSlice({
         setCheckPrice: (state, action) => {
             state.checkEntryPrice = action.payload
         },
+        setCheckTriggerAmount: (state, action) => {
+            state.triggerAmount = action.payload
+        },
+        setCheckPrizeWinner: (state, action) => {
+            state.currentPrizeWinner = action.payload
+        },
+        setCheckClaimedPrize: (state, action) => {
+            state.prizeBeenClaimed = action.payload
+        },
+        setCurrentWinAmount: (state, action) => {
+            state.currentWinAmount = action.payload
+        },
+        setTotalWinnings: (state, action) => {
+            state.totalWinnings = action.payload
+        },
     }
 })
 
-export const { setContractLottery, setLotteryPrize, setDonateToPrize, setEntries, setCheckPrice } = lottery.actions;
+export const { setContractLottery, setLotteryPrize, setDonateToPrize,
+    setEntries, setCheckPrice, setCheckTriggerAmount,
+    setCheckPrizeWinner, setCheckClaimedPrize, setCurrentWinAmount, setTotalWinnings } = lottery.actions;
 
 export default lottery.reducer;

@@ -5,7 +5,8 @@ export const provider = createSlice({
     initialState: {
         connection: null,
         chainId: null,
-        account: null
+        account: null,
+        tokenBalance: 0,
     },
     reducers: {
         setProvider: (state, action) => {
@@ -16,10 +17,13 @@ export const provider = createSlice({
         },
         setAccount: (state, action) => {
             state.account = action.payload
+        },
+        setTokenBalance: (state, action) => {
+            state.tokenBalance = action.payload
         }
     }
 })
 
-export const { setNetwork, setAccount, setProvider } = provider.actions;
+export const { setNetwork, setAccount, setProvider, setTokenBalance } = provider.actions;
 
 export default provider.reducer;

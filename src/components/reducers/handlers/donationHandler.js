@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { loadDonateToPrize, loadToken, loadLottery } from '../interactions';
+import { loadDonateToPrize } from '../interactions';
 
 const DonationHandler = () => {
   const [isDonating, setIsDonating] = useState(false);
@@ -17,13 +17,15 @@ const DonationHandler = () => {
 
   const donateHandler = async (e) => {
     e.preventDefault();
-
-    try {
       setIsDonating(true);
+      try{
       const amount = amountForDonate;
       // Call the async function to donate
       await loadDonateToPrize(provider, amount, lottery, token, chainId, dispatch);
-    } catch (error) {
+      } catch (error) {
+        console.error("Error donating to the prizePool:", error);
+        setIsDonating(false);
+
     } finally {
       setIsDonating(false);
     }
